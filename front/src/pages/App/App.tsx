@@ -12,8 +12,8 @@ function App() {
     breeds,
     fetchBreeds,
     isLoadingMain,
-    isNeedToAuth,
     hasMore,
+    userToken,
     picturesPerPage,
   } = useCatStore();
 
@@ -32,7 +32,7 @@ function App() {
   );
 
   useEffect(() => {
-    if (isNeedToAuth) return;
+    if (!userToken) return;
 
     if (breeds.length === 0 && !isLoadingMain) {
       fetchBreeds();
@@ -48,7 +48,7 @@ function App() {
   const navigate = useNavigate();
   return (
     <main className={styles.container}>
-      {isNeedToAuth ? (
+      {!userToken ? (
         <NoAuthPlaceholder />
       ) : (
         <>

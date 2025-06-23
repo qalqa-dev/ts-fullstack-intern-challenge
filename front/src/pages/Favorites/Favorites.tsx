@@ -4,11 +4,11 @@ import NoAuthPlaceholder from 'components/NoAuthPlaceholder/NoAuthPlaceholder';
 import styles from './Favorites.module.scss';
 
 const Favorites = () => {
-  const { favorites, isNeedToAuth } = useCatStore();
+  const { favorites, userToken } = useCatStore();
 
   return (
     <main className={styles.container}>
-      {isNeedToAuth ? (
+      {!userToken ? (
         <NoAuthPlaceholder />
       ) : (
         <>

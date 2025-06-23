@@ -2,10 +2,10 @@ import { useCatStore } from '@/stores/catStore';
 import { ROUTES } from '@/utils/routes';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import styles from './Auth.module.scss';
+import styles from './Register.module.scss';
 
 const Auth = () => {
-  const { userToken, getUserToken } = useCatStore();
+  const { userToken, registerUser } = useCatStore();
 
   const [inputLogin, setInputLogin] = useState<string>('');
   const [inputPassword, setInputPassword] = useState<string>('');
@@ -30,7 +30,7 @@ const Auth = () => {
       setErrorPassword('Вы не ввели пароль!');
       return;
     }
-    getUserToken(inputLogin, inputPassword);
+    registerUser(inputLogin, inputPassword);
     navigate(ROUTES.HOME);
   };
 
@@ -46,10 +46,10 @@ const Auth = () => {
           </>
         ) : (
           <>
-            <h2 className={styles.title}>Авторизация</h2>
+            <h2 className={styles.title}>Регистрация</h2>
             <div>
               <label className={styles.label} htmlFor="login">
-                Введите ваш логин
+                Придумайте логин
               </label>
               <input
                 value={inputLogin}
@@ -62,7 +62,7 @@ const Auth = () => {
             </div>
             <div>
               <label className={styles.label} htmlFor="passwords">
-                Введите ваш пароль
+                Придумайте пароль
               </label>
               <input
                 value={inputPassword}

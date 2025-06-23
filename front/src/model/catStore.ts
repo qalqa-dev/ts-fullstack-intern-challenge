@@ -7,16 +7,16 @@ export interface CatStore {
   isLoadingMain: boolean;
   isLoadingBreed: boolean;
   hasMore: boolean;
-  error: Error | null;
+  error: Error | null | unknown;
   currentPage: number;
   picturesPerPage: number;
-  userApiKey: string;
-  isNeedToAuth: boolean;
+  userToken: string;
+  catApiKey: string;
   fetchBreeds: () => Promise<void>;
   fetchCatsByBreed: (breed: string) => void;
   resetCats: () => void;
   addToFavorites: (cat: Cat) => void;
   removeFromFavorites: (catId: string) => void;
   isFavorite: (catId: string) => boolean;
-  setApiKey: (apiKey: string) => void;
+  registerUser: (userLogin: string, userPassword: string) => Promise<void>;
 }

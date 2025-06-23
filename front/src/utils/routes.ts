@@ -4,4 +4,5 @@ export enum ROUTES {
   BREED = '/breed/:id',
   NOT_FOUND = '*',
   AUTH = '/auth',
+  REGISTER = '/register',
 }

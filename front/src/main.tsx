@@ -10,6 +10,7 @@ import Auth from './pages/Auth/Auth.tsx';
 import Breed from './pages/Breed/Breed.tsx';
 import Favorites from './pages/Favorites/Favorites.tsx';
 import NotFound from './pages/NotFound/NotFound.tsx';
+import Register from './pages/Register/Register.tsx';
 import { ROUTES } from './utils/routes.ts';
 
 createRoot(document.getElementById('root')!).render(
@@ -22,6 +23,7 @@ createRoot(document.getElementById('root')!).render(
         <Route path={`${ROUTES.BREED}`} element={<Breed />}></Route>
         <Route path={`${ROUTES.FAVORITES}`} element={<Favorites />}></Route>
         <Route path={`${ROUTES.AUTH}`} element={<Auth />}></Route>
+        <Route path={`${ROUTES.REGISTER}`} element={<Register />}></Route>
         <Route path={`${ROUTES.NOT_FOUND}`} element={<NotFound />}></Route>
       </Routes>
       <Footer />
