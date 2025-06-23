@@ -1,8 +1,4 @@
 export interface IBreed {
-  weight: {
-    imperial: string;
-    metric: string;
-  };
   id: string;
   name: string;
   cfa_url: string;
