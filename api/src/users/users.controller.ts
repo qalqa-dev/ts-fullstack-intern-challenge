@@ -38,6 +38,7 @@ export class UsersController {
       );
       const apiKey = this.configService.get<string>('CAT_API_KEY');
       res.setHeader('X-Auth-Token', token);
+
       return res.status(HttpStatus.CREATED).json({
         user,
         api_key: apiKey,

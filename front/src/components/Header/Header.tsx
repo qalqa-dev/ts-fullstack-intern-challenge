@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import styles from './Header.module.scss';
 
 const Header = () => {
-  const { userToken } = useCatStore();
+  const { userToken, userLogout } = useCatStore();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -38,13 +38,23 @@ const Header = () => {
                 Любимые котики
               </Link>
             </li>
-            {!userToken && (
+            {!userToken ? (
               <li className={styles.item}>
                 <Link className={styles.link} to={ROUTES.AUTH}>
                   Войти
                 </Link>
                 <Link className={styles.link} to={ROUTES.REGISTER}>
                   Зарегестрироваться
+                </Link>
+              </li>
+            ) : (
+              <li className={styles.item}>
+                <Link
+                  className={styles.link}
+                  onClick={() => userLogout()}
+                  to={ROUTES.HOME}
+                >
+                  Выход
                 </Link>
               </li>
             )}

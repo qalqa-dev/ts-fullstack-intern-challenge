@@ -75,7 +75,9 @@ export const fetchUserToken = async (login: string, password: string) => {
     if (!response.ok) {
       throw new Error('Something went wrong');
     }
-    return await response.json();
+    const authToken = response.headers.get('X-Auth-Token');
+    const apiKey = await response.json().then((data) => data.api_key);
+    return { apiKey, authToken };
   } catch (error) {
     console.error(error);
     return null;

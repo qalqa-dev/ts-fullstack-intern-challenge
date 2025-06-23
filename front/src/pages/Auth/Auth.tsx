@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import styles from './Auth.module.scss';
 
 const Auth = () => {
-  const { userToken, getUserToken } = useCatStore();
+  const { userToken, loginUser } = useCatStore();
 
   const [inputLogin, setInputLogin] = useState<string>('');
   const [inputPassword, setInputPassword] = useState<string>('');
@@ -30,7 +30,7 @@ const Auth = () => {
       setErrorPassword('Вы не ввели пароль!');
       return;
     }
-    getUserToken(inputLogin, inputPassword);
+    loginUser(inputLogin, inputPassword);
     navigate(ROUTES.HOME);
   };
 

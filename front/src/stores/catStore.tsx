@@ -1,4 +1,9 @@
-import { addNewUser, getCatsBreeds, getCatsByBreed } from '@/data/api';
+import {
+  addNewUser,
+  fetchUserToken,
+  getCatsBreeds,
+  getCatsByBreed,
+} from '@/data/api';
 import { CatStore } from '@/model/catStore';
 import { create } from 'zustand';
 
@@ -105,5 +110,25 @@ export const useCatStore = create<CatStore>((set, get) => ({
     set({ userToken, catApiKey });
     localStorage.setItem(USER_TOKEN_KEY, userToken);
     localStorage.setItem(CAT_API_KEY_STORAGE_KEY, catApiKey);
+  },
+
+  loginUser: async (userLogin: string, userPassword: string) => {
+    const response = await fetchUserToken(userLogin, userPassword);
+    if (response === null) {
+      return;
+    }
+    const { apiKey: catApiKey, authToken: userToken } = response;
+    if (!userToken) {
+      return;
+    }
+    set({ userToken });
+    localStorage.setItem(USER_TOKEN_KEY, userToken);
+    localStorage.setItem(CAT_API_KEY_STORAGE_KEY, catApiKey);
+  },
+
+  userLogout: () => {
+    set({ userToken: '' });
+    localStorage.removeItem(USER_TOKEN_KEY);
+    localStorage.removeItem(CAT_API_KEY_STORAGE_KEY);
   },
 }));

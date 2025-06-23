@@ -19,4 +19,6 @@ export interface CatStore {
   removeFromFavorites: (catId: string) => void;
   isFavorite: (catId: string) => boolean;
   registerUser: (userLogin: string, userPassword: string) => Promise<void>;
+  loginUser: (userLogin: string, userPassword: string) => Promise<void>;
+  userLogout: () => void;
 }
