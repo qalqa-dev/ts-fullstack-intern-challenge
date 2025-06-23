@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as crypto from 'crypto';
 import { Repository } from 'typeorm';
@@ -11,7 +12,19 @@ export class UsersService {
     @InjectRepository(User)
     private usersRepo: Repository<User>,
     private config: ConfigService,
+    private jwtService: JwtService,
   ) {}
+
+  private generateJwtToken(user: User): string {
+    const payload = {
+      sub: user.id,
+      login: user.login,
+    };
+    return this.jwtService.sign(payload, {
+      secret: this.config.get('JWT_SECRET'),
+      expiresIn: this.config.get('JWT_EXPIRES_IN') || '1h',
+    });
+  }
 
   async create(
     login: string,
@@ -25,11 +38,32 @@ export class UsersService {
     const user = this.usersRepo.create({ login, passwordHash: hash });
     await this.usersRepo.save(user);
 
-    const token = crypto
+    const token = this.generateJwtToken(user);
+
+    return { user, token };
+  }
+
+  async login(
+    login: string,
+    password: string,
+  ): Promise<{ user: User; token: string }> {
+    const hash = crypto
       .createHash('sha256')
-      .update(user.id + this.config.get('SECRET_SALT'))
+      .update(password + this.config.get('SECRET_SALT'))
       .digest('hex');
 
+    const user = await this.usersRepo.findOne({
+      where: {
+        login,
+        passwordHash: hash,
+      },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const token = this.generateJwtToken(user);
     return { user, token };
   }
 
