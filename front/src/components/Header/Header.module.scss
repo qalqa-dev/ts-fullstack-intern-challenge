@@ -1,0 +1,187 @@
+//Если что я люблю и уважаю tailwind, но тут решил пофлексить CSS модулями, так что пускай без него
+
+$header-padding: 1rem;
+$header-border-radius: 1rem;
+$header-bg-color: var(--color-accent-transparent-semi);
+$link-color: var(--color-text-header);
+$link-hover-bg: var(--color-accent-highlight);
+$transition-time: 0.3s ease;
+
+.header {
+  box-sizing: border-box;
+  margin: $header-padding;
+  position: fixed;
+  width: calc(100% - 2 * $header-padding);
+  top: 0;
+  border-radius: $header-border-radius;
+  padding: 1em 2rem;
+  background-color: $header-bg-color;
+  z-index: 1000;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    border-radius: $header-border-radius;
+    backdrop-filter: blur(10px);
+  }
+
+  .container {
+    max-width: var(--container-size-desktop);
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo {
+    color: $link-color;
+    font-weight: 500;
+    font-size: clamp(2rem, 5vw, 3rem);
+    padding: 1.4rem 2rem;
+    border-radius: $header-border-radius;
+    transition:
+      color $transition-time,
+      background-color $transition-time;
+
+    &:hover {
+      background-color: $link-hover-bg;
+    }
+  }
+
+  .nav {
+    position: relative;
+
+    @media (max-width: 768px) {
+      padding: 2rem;
+      background-color: var(--color-bg-comp-transparent);
+      border-radius: $header-border-radius;
+    }
+  }
+
+  .burger {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 2.4rem;
+    width: 3rem;
+    padding: 0;
+
+    span {
+      display: block;
+      height: 0.3rem;
+      width: 100%;
+      background-color: $link-color;
+      border-radius: 0.2rem;
+      transition:
+        transform $transition-time,
+        background-color $transition-time,
+        opacity $transition-time;
+
+      &:nth-child(1) {
+        transform-origin: top left;
+      }
+      &:nth-child(3) {
+        transform-origin: bottom left;
+      }
+    }
+
+    &.active {
+      span {
+        &:nth-child(1) {
+          transform: rotate(45deg) translate(0.5rem, -0.5rem);
+        }
+        &:nth-child(2) {
+          opacity: 0;
+        }
+        &:nth-child(3) {
+          transform: rotate(-45deg) translate(0.5rem, 0.4rem);
+        }
+      }
+    }
+
+    @media (max-width: 768px) {
+      display: flex;
+    }
+  }
+
+  .list {
+    display: flex;
+    align-items: center;
+    gap: clamp(1rem, 2vw, 2rem);
+
+    @media (max-width: 768px) {
+      position: absolute;
+      top: 8.3rem;
+      right: -2rem;
+      flex-direction: column;
+      background-color: $header-bg-color;
+      border-radius: 0.8rem;
+      padding: 0;
+      opacity: 0;
+      width: 0%;
+      transition: all $transition-time;
+
+      &::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        border-radius: $header-border-radius;
+        backdrop-filter: blur(10px);
+      }
+
+      .item {
+        .link {
+          transition: $transition-time;
+          font-size: 0rem;
+          opacity: 0;
+        }
+      }
+
+      &.listOpen {
+        width: calc(100vw - 2 * $header-padding);
+        box-sizing: border-box;
+        display: flex;
+        padding: $header-padding;
+        opacity: 1;
+
+        .item {
+          display: flex;
+          width: 100%;
+
+          .link {
+            width: 100%;
+            opacity: 1;
+            font-size: 1.8rem;
+            text-align: center;
+          }
+        }
+      }
+    }
+  }
+
+  .item {
+    .link {
+      color: $link-color;
+      border-radius: $header-border-radius;
+      font-size: 1.8rem;
+      padding: $header-padding 2rem;
+      transition: background-color $transition-time;
+
+      &:hover {
+        background-color: $link-hover-bg;
+      }
+    }
+  }
+}
