@@ -1,29 +1,41 @@
 import {
+  addNewFavorite,
   addNewUser,
+  deleteFavorite,
   fetchUserToken,
+  getCatById,
   getCatsBreeds,
   getCatsByBreed,
+  getFavorites,
 } from '@/data/api';
 import { CatStore } from '@/model/catStore';
+import { ROUTES } from '@/utils/routes';
 import { create } from 'zustand';
 
-const FAVORITES_STORAGE_KEY = 'cat_favorites';
 const CAT_API_KEY_STORAGE_KEY = 'cat_api_key';
 const USER_TOKEN_KEY = 'user_token';
 
 export const useCatStore = create<CatStore>((set, get) => ({
   breeds: [],
   cats: [],
-  favorites: JSON.parse(localStorage.getItem(FAVORITES_STORAGE_KEY) || '[]'),
+  favorites: [],
   isLoadingMain: false,
   isLoadingBreed: false,
   hasMore: true,
   error: null,
+  errorMessage: '',
   currentPage: 0,
   picturesPerPage: 10,
   catApiKey: localStorage.getItem(CAT_API_KEY_STORAGE_KEY) || '',
   userToken:
     import.meta.env.VITE_API_KEY || localStorage.getItem(USER_TOKEN_KEY) || '',
+
+  init: () => {
+    const { userToken, getAllFavorites } = get();
+    if (userToken) {
+      getAllFavorites();
+    }
+  },
 
   fetchBreeds: async () => {
     const { catApiKey, picturesPerPage, currentPage, breeds, hasMore } = get();
@@ -72,27 +84,40 @@ export const useCatStore = create<CatStore>((set, get) => ({
   },
 
   addToFavorites: (cat) => {
-    const { favorites } = get();
-    if (!favorites.find((favorite) => favorite.id === cat.id)) {
-      const updatedFavorites = [...favorites, cat];
-      set({ favorites: updatedFavorites });
-      localStorage.setItem(
-        FAVORITES_STORAGE_KEY,
-        JSON.stringify(updatedFavorites),
-      );
-    }
+    addNewFavorite(cat.id, get().userToken);
+    set({
+      favorites: [...get().favorites, cat],
+    });
   },
 
   removeFromFavorites: (catId) => {
-    const { favorites } = get();
-    const updatedFavorites = favorites.filter(
-      (favorite) => favorite.id !== catId,
-    );
-    set({ favorites: updatedFavorites });
-    localStorage.setItem(
-      FAVORITES_STORAGE_KEY,
-      JSON.stringify(updatedFavorites),
-    );
+    deleteFavorite(catId, get().userToken);
+    set({
+      favorites: get().favorites.filter((cat) => cat.id !== catId),
+    });
+  },
+
+  getAllFavorites: async () => {
+    const { userToken } = get();
+    if (!userToken) return;
+
+    try {
+      const favoritesData = await getFavorites(userToken);
+
+      const cats = await Promise.all(
+        favoritesData.data.map(async (item: { cat_id: string; id: string }) => {
+          const catDetails = await getCatById(item.cat_id);
+          return { ...catDetails, favoriteId: item.id };
+        }),
+      );
+
+      const validCats = cats.filter((cat) => cat !== null);
+
+      set({ favorites: validCats });
+    } catch (error) {
+      console.error('Ошибка при загрузке избранного:', error);
+      set({ favorites: [] });
+    }
   },
 
   isFavorite: (catId) =>
@@ -110,11 +135,15 @@ export const useCatStore = create<CatStore>((set, get) => ({
     set({ userToken, catApiKey });
     localStorage.setItem(USER_TOKEN_KEY, userToken);
     localStorage.setItem(CAT_API_KEY_STORAGE_KEY, catApiKey);
+    document.location.href = ROUTES.HOME;
   },
 
   loginUser: async (userLogin: string, userPassword: string) => {
     const response = await fetchUserToken(userLogin, userPassword);
     if (response === null) {
+      set({
+        errorMessage: 'Неправильный логин или пароль',
+      });
       return;
     }
     const { apiKey: catApiKey, authToken: userToken } = response;
@@ -122,8 +151,12 @@ export const useCatStore = create<CatStore>((set, get) => ({
       return;
     }
     set({ userToken });
+    set({
+      errorMessage: 'Вы успешно авторизовались!',
+    });
     localStorage.setItem(USER_TOKEN_KEY, userToken);
     localStorage.setItem(CAT_API_KEY_STORAGE_KEY, catApiKey);
+    document.location.href = ROUTES.HOME;
   },
 
   userLogout: () => {

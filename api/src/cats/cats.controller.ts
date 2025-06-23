@@ -22,26 +22,40 @@ import { Like } from './like.entity';
 @Controller('likes')
 export class CatsController {
   constructor(
-    private cs: CatsService,
-    private auth: UsersService,
+    private readonly catsService: CatsService,
+    private readonly usersService: UsersService,
   ) {}
 
   @Get()
-  @ApiResponse({ status: HttpStatus.OK, type: [Like] })
-  listLikes(@Req() req) {
-    const user: User = req.user;
-    return { data: this.cs.list(user) };
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Returns all likes for current user',
+    type: [Like],
+  })
+  async listLikes(@Req() req: { user: User }) {
+    const likes = await this.catsService.list(req.user);
+    return { data: likes };
   }
 
   @Post()
   @ApiBody({ type: CreateLikeDto })
-  async add(@Body() dto: { cat_id: string }, @Req() req) {
-    const like = await this.cs.newLike(dto, req.user);
-    return { ...like };
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Creates new like',
+    type: Like,
+  })
+  async add(@Body() dto: { cat_id: string }, @Req() req: { user: User }) {
+    const like = await this.catsService.newLike(dto, req.user);
+    return like;
   }
 
   @Delete(':cat_id')
-  drop(@Param('cat_id') cat_id: string, @Req() req) {
-    return this.cs.dropLike(cat_id, req.user);
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Removes like for specified cat',
+  })
+  async drop(@Param('cat_id') cat_id: string, @Req() req: { user: User }) {
+    await this.catsService.dropLike(cat_id, req.user);
+    return { message: 'Like removed successfully' };
   }
 }

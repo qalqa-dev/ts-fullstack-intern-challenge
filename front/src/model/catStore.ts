@@ -8,6 +8,7 @@ export interface CatStore {
   isLoadingBreed: boolean;
   hasMore: boolean;
   error: Error | null | unknown;
+  errorMessage: string;
   currentPage: number;
   picturesPerPage: number;
   userToken: string;
@@ -21,4 +22,5 @@ export interface CatStore {
   registerUser: (userLogin: string, userPassword: string) => Promise<void>;
   loginUser: (userLogin: string, userPassword: string) => Promise<void>;
   userLogout: () => void;
+  getAllFavorites: () => void;
 }

@@ -68,15 +68,17 @@ export class UsersService {
   }
 
   async validateToken(token: string): Promise<User | null> {
-    const users = await this.usersRepo.find();
-    const matched = users.find(
-      (u) =>
-        crypto
-          .createHash('sha256')
-          .update(u.id + this.config.get('SECRET_SALT'))
-          .digest('hex') === token,
-    );
-    return matched || null;
+    try {
+      const payload = this.jwtService.verify(token, {
+        secret: this.config.get('JWT_SECRET'),
+      });
+
+      return await this.usersRepo.findOne({
+        where: { id: payload.sub },
+      });
+    } catch (e) {
+      return null;
+    }
   }
   async findAll(): Promise<User[]> {
     return this.usersRepo.find();

@@ -1,7 +1,7 @@
 import { useCatStore } from '@/stores/catStore';
 import { ROUTES } from '@/utils/routes';
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import styles from './Register.module.scss';
 
 const Auth = () => {
@@ -11,7 +11,6 @@ const Auth = () => {
   const [inputPassword, setInputPassword] = useState<string>('');
   const [errorLogin, setErrorLogin] = useState<string>('');
   const [errorPassword, setErrorPassword] = useState<string>('');
-  const navigate = useNavigate();
 
   const handleLoginInput = (event: React.FormEvent<HTMLInputElement>) => {
     setInputLogin(event.currentTarget.value);
@@ -31,7 +30,6 @@ const Auth = () => {
       return;
     }
     registerUser(inputLogin, inputPassword);
-    navigate(ROUTES.HOME);
   };
 
   return (

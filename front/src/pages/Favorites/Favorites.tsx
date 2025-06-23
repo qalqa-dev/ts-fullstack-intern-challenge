@@ -1,10 +1,15 @@
+import BreedCard from '@/components/BreedCard/BreedCard';
 import { useCatStore } from '@/stores/catStore';
-import BreedCard from 'components/BreedCard/BreedCard';
 import NoAuthPlaceholder from 'components/NoAuthPlaceholder/NoAuthPlaceholder';
+import { useEffect } from 'react';
 import styles from './Favorites.module.scss';
 
 const Favorites = () => {
-  const { favorites, userToken } = useCatStore();
+  const { favorites, getAllFavorites, userToken } = useCatStore();
+
+  useEffect(() => {
+    getAllFavorites();
+  }, [getAllFavorites]);
 
   return (
     <main className={styles.container}>

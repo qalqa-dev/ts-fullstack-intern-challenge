@@ -10,9 +10,10 @@ import styles from './Breed.module.scss';
 const Breed = () => {
   const location = useLocation();
   const state = location.state as { breed: IBreed };
-  if (!state) return <NotFound />;
 
-  const { cats, resetCats, fetchCatsByBreed, isLoadingBreed } = useCatStore();
+  const { cats, resetCats, fetchCatsByBreed, isLoadingBreed, getAllFavorites } =
+    useCatStore();
+
   useEffect(() => {
     const fetchData = async () => {
       resetCats();
@@ -21,7 +22,10 @@ const Breed = () => {
       }
     };
     fetchData();
-  }, [state.breed.id, fetchCatsByBreed]);
+    getAllFavorites();
+  }, [state.breed.id, fetchCatsByBreed, getAllFavorites]);
+
+  if (!state) return <NotFound />;
 
   return (
     <main className={styles.container}>

@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Like } from 'src/cats/like.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class User {
@@ -25,4 +26,7 @@ export class User {
   })
   @Column()
   passwordHash: string;
+
+  @OneToMany(() => Like, (like) => like.user)
+  likes: Like[];
 }

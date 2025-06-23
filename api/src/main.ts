@@ -13,7 +13,7 @@ async function bootstrap() {
   app.enableCors({
     origin: 'http://localhost:5173',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    allowedHeaders: 'Content-Type, Accept, Authorization',
+    allowedHeaders: 'Content-Type, Accept, Authorization, X-Auth-Token',
     exposedHeaders: ['X-Auth-Token'],
     credentials: true,
   });

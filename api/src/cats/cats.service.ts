@@ -11,15 +11,29 @@ export class CatsService {
     private likesRepo: Repository<Like>,
   ) {}
 
-  list(user: User) {
-    return this.likesRepo.find({ where: { userId: user.id } });
+  async list(user: User): Promise<Like[]> {
+    return this.likesRepo.find({
+      where: { user: { id: user.id } },
+      relations: ['user'],
+    });
   }
-  async newLike(dto: { cat_id: string }, user: User) {
-    const like = this.likesRepo.create({ cat_id: dto.cat_id, userId: user.id });
+
+  async newLike(dto: { cat_id: string }, user: User): Promise<Like> {
+    const like = this.likesRepo.create({
+      cat_id: dto.cat_id,
+      user: user,
+    });
     return this.likesRepo.save(like);
   }
-  async dropLike(cat_id: string, user: User) {
-    const res = await this.likesRepo.delete({ cat_id, userId: user.id });
-    if (!res.affected) throw new NotFoundException();
+
+  async dropLike(cat_id: string, user: User): Promise<void> {
+    const result = await this.likesRepo.delete({
+      cat_id,
+      user: { id: user.id },
+    });
+
+    if (result.affected === 0) {
+      throw new NotFoundException('Like not found');
+    }
   }
 }

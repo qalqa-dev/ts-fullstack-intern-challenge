@@ -1,17 +1,16 @@
 import { useCatStore } from '@/stores/catStore';
 import { ROUTES } from '@/utils/routes';
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import styles from './Auth.module.scss';
 
 const Auth = () => {
-  const { userToken, loginUser } = useCatStore();
+  const { userToken, loginUser, errorMessage } = useCatStore();
 
   const [inputLogin, setInputLogin] = useState<string>('');
   const [inputPassword, setInputPassword] = useState<string>('');
   const [errorLogin, setErrorLogin] = useState<string>('');
   const [errorPassword, setErrorPassword] = useState<string>('');
-  const navigate = useNavigate();
 
   const handleLoginInput = (event: React.FormEvent<HTMLInputElement>) => {
     setInputLogin(event.currentTarget.value);
@@ -31,7 +30,6 @@ const Auth = () => {
       return;
     }
     loginUser(inputLogin, inputPassword);
-    navigate(ROUTES.HOME);
   };
 
   return (
@@ -78,6 +76,7 @@ const Auth = () => {
             </button>
           </>
         )}
+        {errorMessage && <p className={styles.error}>{errorMessage}</p>}
       </div>
     </div>
   );

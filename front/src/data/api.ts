@@ -83,3 +83,78 @@ export const fetchUserToken = async (login: string, password: string) => {
     return null;
   }
 };
+export const addNewFavorite = async (catId: string, authToken: string) => {
+  const url = `${backendApi}/likes`;
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authToken}`,
+      },
+      body: JSON.stringify({ cat_id: catId }),
+    });
+    if (!response.ok) {
+      throw new Error('Something went wrong');
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const getFavorites = async (authToken: string) => {
+  const url = `${backendApi}/likes`;
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+    if (!response.ok) {
+      throw new Error('Something went wrong');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+};
+
+export const deleteFavorite = async (catId: string, authToken: string) => {
+  const url = `${backendApi}/likes/${catId}`;
+  try {
+    const response = await fetch(url, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+    if (!response.ok) {
+      throw new Error('Something went wrong');
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const getCatById = async (catId: string) => {
+  const url = `${api}/images/${catId}`;
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (!response.ok) {
+      throw new Error('Something went wrong');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};

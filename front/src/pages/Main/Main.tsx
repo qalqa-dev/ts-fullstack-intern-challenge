@@ -5,9 +5,9 @@ import Skeleton from 'components/Skeleton/Skeleton';
 import { debounce } from 'lodash';
 import { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styles from './App.module.scss';
+import styles from './Main.module.scss';
 
-function App() {
+function Main() {
   const {
     breeds,
     fetchBreeds,
@@ -76,4 +76,4 @@ function App() {
   );
 }
 
-export default App;
+export default Main;
