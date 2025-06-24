@@ -158,3 +158,43 @@ export const getCatById = async (catId: string) => {
     return null;
   }
 };
+
+export const logout = async (token: string) => {
+  const url = `${backendApi}/users/logout`;
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ token }),
+    });
+    if (!response.ok) {
+      throw new Error('Something went wrong');
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const validateToken = async (token: string) => {
+  const url = `${backendApi}/users/validate`;
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ token }),
+    });
+    if (!response.ok) {
+      throw new Error('Something went wrong');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};

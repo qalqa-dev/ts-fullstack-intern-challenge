@@ -23,4 +23,5 @@ export interface CatStore {
   loginUser: (userLogin: string, userPassword: string) => Promise<void>;
   userLogout: () => void;
   getAllFavorites: () => void;
+  validateUserToken: () => void;
 }

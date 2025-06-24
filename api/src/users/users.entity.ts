@@ -27,6 +27,12 @@ export class User {
   @Column()
   passwordHash: string;
 
+  @Column({ nullable: true })
+  token: string | null;
+
+  @Column({ type: 'timestamp', nullable: true })
+  tokenExpiresAt: Date | null;
+
   @OneToMany(() => Like, (like) => like.user)
   likes: Like[];
 }

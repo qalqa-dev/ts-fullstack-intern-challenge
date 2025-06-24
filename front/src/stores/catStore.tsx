@@ -7,6 +7,8 @@ import {
   getCatsBreeds,
   getCatsByBreed,
   getFavorites,
+  logout,
+  validateToken,
 } from '@/data/api';
 import { CatStore } from '@/model/catStore';
 import { ROUTES } from '@/utils/routes';
@@ -160,8 +162,20 @@ export const useCatStore = create<CatStore>((set, get) => ({
   },
 
   userLogout: () => {
+    logout(get().userToken);
     set({ userToken: '' });
     localStorage.removeItem(USER_TOKEN_KEY);
     localStorage.removeItem(CAT_API_KEY_STORAGE_KEY);
+  },
+
+  validateUserToken: async () => {
+    const { userToken } = get();
+    const res = await validateToken(userToken);
+    if (res === null) {
+      set({ userToken: '' });
+      localStorage.removeItem(USER_TOKEN_KEY);
+      localStorage.removeItem(CAT_API_KEY_STORAGE_KEY);
+      return;
+    }
   },
 }));

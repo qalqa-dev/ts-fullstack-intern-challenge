@@ -6,9 +6,11 @@ import {
   HttpStatus,
   Post,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from 'src/auth/auth.guard';
 import { CreateUserDto } from './create-user.dto';
 import { LoginUserDto } from './login-user.dto';
 import { User } from './users.entity';
@@ -78,5 +80,23 @@ export class UsersController {
         message: 'Invalid credentials',
       });
     }
+  }
+
+  @Post('logout')
+  @UseGuards(AuthGuard)
+  async logout(@Body() body: { token: string }, @Res() res) {
+    const success = await this.usersService.logout(body.token);
+
+    if (success) {
+      return res.json({ message: 'Successfully logged out' });
+    } else {
+      return res.status(400).json({ message: 'Invalid token' });
+    }
+  }
+
+  @Post('validate')
+  @UseGuards(AuthGuard)
+  async validate(@Res() res) {
+    return res.json({ message: 'Token is valid' });
   }
 }

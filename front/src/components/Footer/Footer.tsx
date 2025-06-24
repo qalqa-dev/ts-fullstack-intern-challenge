@@ -14,7 +14,7 @@ const Footer = () => {
         />
         <ul className={styles.list}>
           <li className={styles.item}>
-            <a className={styles.link} href="https://github.com/qalqaa">
+            <a className={styles.link} href="https://github.com/qalqa-dev">
               GitHub
             </a>
           </li>
@@ -24,7 +24,7 @@ const Footer = () => {
             </a>
           </li>
           <li className={styles.item}>
-            <a className={styles.link} href="https://t.me/qalqaa">
+            <a className={styles.link} href="https://t.me/qalqa_dev">
               Telegram
             </a>
           </li>
