@@ -1,4 +1,5 @@
 version: '3.7'
+
 services:
   proxy:
     container_name: cat-pinterest-proxy
@@ -12,19 +13,32 @@ services:
       cat-pinterest-api:
         condition: service_started
     ports:
-      - "8080:80"
+      - '8080:80'
     networks:
       - cat-pinterest-net
 
   cat-pinterest-api:
+    env_file:
+      - ./api/.env
     container_name: cat-pinterest-api
     image: cat-pinterest-api
     build:
       context: ./api/
     networks:
       - cat-pinterest-net
+    ports:
+      - '3000:3000'
     environment:
       NODE_ENV: prod
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      CAT_API_KEY: ${CAT_API_KEY}
+      SECRET_SALT: ${SECRET_SALT}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN}
     depends_on:
       cat-pinterest-api-pg:
         condition: service_healthy
@@ -34,6 +48,8 @@ services:
     image: cat-pinterest-front
     build:
       context: ./front/
+    ports:
+      - '5173:80'
     networks:
       - cat-pinterest-net
     environment:
@@ -45,12 +61,14 @@ services:
     networks:
       - cat-pinterest-net
     environment:
-      POSTGRES_PASSWORD: 1
-      POSTGRES_USER: postgres
-      POSTGRES_DB: support_lk_db
-    #      PG_DATA: /var/lib/postgresql/data
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - ./pg-init:/docker-entrypoint-initdb.d
+        #  PG_DATA: /var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
       interval: 2s
       timeout: 5s
       retries: 10

@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import * as crypto from 'crypto';
+import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
 import { User } from './users.entity';
 
@@ -30,10 +30,8 @@ export class UsersService {
     login: string,
     password: string,
   ): Promise<{ user: User; token: string }> {
-    const hash = crypto
-      .createHash('sha256')
-      .update(password + this.config.get('SECRET_SALT'))
-      .digest('hex');
+    const salt = await bcrypt.genSalt();
+    const hash = await bcrypt.hash(password, salt);
 
     const user = this.usersRepo.create({ login, passwordHash: hash });
     await this.usersRepo.save(user);
@@ -47,19 +45,17 @@ export class UsersService {
     login: string,
     password: string,
   ): Promise<{ user: User; token: string }> {
-    const hash = crypto
-      .createHash('sha256')
-      .update(password + this.config.get('SECRET_SALT'))
-      .digest('hex');
-
     const user = await this.usersRepo.findOne({
-      where: {
-        login,
-        passwordHash: hash,
-      },
+      where: { login },
     });
 
     if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
+
+    if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
